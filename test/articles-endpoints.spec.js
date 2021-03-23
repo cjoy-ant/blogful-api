@@ -20,29 +20,37 @@ describe.only("Articles Endpoints", function () {
 
   afterEach("cleanup", () => db("blogful_articles").truncate());
 
-  context("Given there are articles in the database", () => {
-    const testArticles = makeArticlesArray();
-
-    beforeEach("insert articles", () => {
-      return db.into("blogful_articles").insert(testArticles);
+  describe(`GET /articles`, () => {
+    context(`Given no articles`, () => {
+      it(`responds with 200 and an empty list`, () => {
+        return supertest(app).get("/articles").expect(200, []);
+      });
     });
 
-    it("GET /articles responds with 200 and all of the articles", () => {
-      return (
-        supertest(app)
-          .get("/articles")
-          //.expect(200);
-          // TODO: add more assertions about the body
-          .expect(200, testArticles)
-      );
-    });
+    context("Given there are articles in the database", () => {
+      const testArticles = makeArticlesArray();
 
-    it("GET /articles/:article_id responds with 200 and the specified article", () => {
-      const articleId = 2;
-      const expectedArticle = testArticles[articleId - 1];
-      return supertest(app)
-        .get(`/articles/${articleId}`)
-        .expect(200, expectedArticle);
+      beforeEach("insert articles", () => {
+        return db.into("blogful_articles").insert(testArticles);
+      });
+
+      it("GET /articles responds with 200 and all of the articles", () => {
+        return (
+          supertest(app)
+            .get("/articles")
+            //.expect(200);
+            // TODO: add more assertions about the body
+            .expect(200, testArticles)
+        );
+      });
+
+      it("GET /articles/:article_id responds with 200 and the specified article", () => {
+        const articleId = 2;
+        const expectedArticle = testArticles[articleId - 1];
+        return supertest(app)
+          .get(`/articles/${articleId}`)
+          .expect(200, expectedArticle);
+      });
     });
   });
 
