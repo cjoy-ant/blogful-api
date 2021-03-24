@@ -54,7 +54,7 @@ describe.only("Articles Endpoints", function () {
     });
   });
 
-  describe.only(`GET /articles/:article_id`, () => {
+  describe(`GET /articles/:article_id`, () => {
     context(`Given no articles`, () => {
       it(`responds with 404`, () => {
         const articleId = 123456;
@@ -156,6 +156,29 @@ describe.only("Articles Endpoints", function () {
           .expect(400, {
             error: { message: `Missing '${field}' in request body` },
           });
+      });
+    });
+  });
+
+  describe.only(`DELETE /articles/:article_id`, () => {
+    context("Given there are articles in the database", () => {
+      const testArticles = makeArticlesArray();
+
+      beforeEach("insert articles", () => {
+        return db.into("blogful_articles").insert(testArticles);
+      });
+
+      it("responds with 204 and removes the article", () => {
+        const idToRemove = 2;
+        const expectedArticles = testArticles.filter(
+          (article) => article.id !== idToRemove
+        );
+        return supertest(app)
+          .delete(`/articles/${idToRemove}`)
+          .expect(204)
+          .then((res) =>
+            supertest(app).get(`/articles`).expect(expectedArticles)
+          );
       });
     });
   });
