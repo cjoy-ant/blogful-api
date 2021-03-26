@@ -4,7 +4,7 @@ const supertest = require("supertest");
 const app = require("../src/app");
 const { makeArticlesArray } = require("./articles.fixtures");
 
-describe.only("Articles Endpoints", function () {
+describe("Articles Endpoints", function () {
   let db;
 
   before("make knex instance", () => {
@@ -198,7 +198,7 @@ describe.only("Articles Endpoints", function () {
     });
   });
 
-  describe.only(`PATCH /api/articles/:article_id`, () => {
+  describe(`PATCH /api/articles/:article_id`, () => {
     context(`Given no articles`, () => {
       it(`responds with 404`, () => {
         const articleId = 123456;
